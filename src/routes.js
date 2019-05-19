@@ -31,5 +31,7 @@ routes.post('/user', UserControlle.store) // lista todos os cursos
 routes.get('/user', UserControlle.index) // lista todos os cursos
 routes.put('/user/:id', UserControlle.update)// atualiza um curso
 
+// test
+routes.get('/test', UserControlle.test) // lista todos os cursos
 
 module.exports = routes

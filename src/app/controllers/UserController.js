@@ -8,6 +8,10 @@ class UserController {
     return res.status(200).json(user)
   }
 
+  async test(req, res) {
+    return res.status(200).json({ mensage: 'conexaõ bem sucedida' })
+  }
+
   // lista todos os usuarios
   async index(req, res) {
     const users = await User.findAll({})
