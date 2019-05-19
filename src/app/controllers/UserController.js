@@ -9,7 +9,7 @@ class UserController {
   }
 
   async test(req, res) {
-    return res.status(200).json({ mensage: 'conexaõ bem sucedida' })
+    return res.status(200).json({ mensage: 'Voce tem uma conexão muito bem sucedida' })
   }
 
   // lista todos os usuarios
