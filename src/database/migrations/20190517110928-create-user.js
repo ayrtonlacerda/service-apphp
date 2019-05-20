@@ -2,26 +2,42 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('forms', {
+    return queryInterface.createTable('users', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      table_name: {
+      name: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
+      email: {
         allowNull: false,
         type: Sequelize.STRING,
         uniquer: true,
       },
-      id_table: {
-        type: Sequelize.INTEGER,
+      type: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
+      token: {
+        allowNull: false,
+        type: Sequelize.STRING,
+        uniquer: true,
+      },
+      validity: {
+        type: Sequelize.DATE
+      },
+      password_hash: {
+        type: Sequelize.STRING,
       },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE
       },
-      update_at: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE
       },
@@ -29,6 +45,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('forms')
+    return queryInterface.dropTable('users');
   }
 };
