@@ -1,11 +1,39 @@
-const { User } = require('../models')
+const { User, Class, Student } = require('../models')
 
 class UserController {
   // cria um novo usuario
   async store(req, res) {
+    const { email, type } = req.body
+    const { token } = req.headers
+
+    if (type === 'prof') {
+      if (token) {
+        const admin = await User.findOne({ where: { token } })
+        if (admin !== null) {
+          if (admin.type !== 'admin') {
+            return res.status(401).json({ error: ' Usuario não tem permissão de cadastrar professor' })
+          }
+        }
+      } else {
+        return res.status(401).json({ error: 'Precisa de um usuario admin' })
+      }
+    }
+
+
+
+    // so admin pode adcionar prof
+    const userResult = await User.findOne({ where: { email } })
+    if (userResult !== null) {
+      // adicionar nova turma        
+      return res.status(400).json({ error: 'Usuario ja cadastrado' })
+    }
+
     const user = await User.create(req.body)
 
-    return res.status(200).json(user)
+    return res.status(200).json({
+      mensage: "Cadastrado com sucesso",
+      user
+    })
   }
 
   async test(req, res) {

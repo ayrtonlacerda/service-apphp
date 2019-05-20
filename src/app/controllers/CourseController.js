@@ -3,7 +3,20 @@ const { Course, User } = require('../models')
 class CourseController {
   //lista todos os cursos
   async index(req, res) {
-    const courses = await Course.findAll({})
+    let filter = {}
+    if (req.query.course_id) {
+      filter = {
+        id: req.query.course_id
+      }
+    }
+    if (req.query.course_name) {
+      filter = {
+        name: req.query.course_name
+      }
+    }
+    const courses = await Course.findAll({
+      where: filter
+    })
 
     return res.json(courses)
   }
@@ -13,8 +26,8 @@ class CourseController {
     const { name } = req.body
     const { authorization } = req.headers
 
-    const user = await User.findByPk(authorization)
-    if (user.type !== 'admin') {
+    const user = await User.findOne({ where: { token: authorization } })
+    if (user === null || user.type !== 'admin') {
       return res.status(401).json({ error: 'Acesso negado' })
     }
 
@@ -33,6 +46,12 @@ class CourseController {
   // atualiza algum curso no bd
   async update(req, res) {
     const id = req.params.id
+
+    const user = await User.findOne({ where: { token: authorization } })
+    if (user === null || user.type !== 'admin') {
+      return res.status(401).json({ error: 'Acesso negado' })
+    }
+
     const test = await Course.findByPk(id)
     console.log(id)
     if (test === null) {
