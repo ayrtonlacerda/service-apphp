@@ -67,7 +67,11 @@ class UserController {
 
     return res
       .status(200)
-      .json({ token: user.token })
+      .json({
+        name: user.name,
+        email: user.email,
+        token: user.token
+      })
   }
 
   // atualiza usuario
