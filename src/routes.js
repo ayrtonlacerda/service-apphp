@@ -25,6 +25,7 @@ routes.put('/discipline/:id', DisciplineControlle.update)// atualiza um curso
 
 // Users
 routes.post('/user', UserControlle.store) // lista todos os cursos
+routes.post('/user/login', UserControlle.login) // lista todos os cursos
 routes.get('/user', UserControlle.index) // lista todos os cursos
 routes.put('/user/:id', UserControlle.update)// atualiza um curso
 
