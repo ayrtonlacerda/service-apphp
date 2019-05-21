@@ -61,7 +61,7 @@ class UserController {
       return res
         .status(400)
         .json({
-          error: 'Senha incorreta'
+          error: 'Senha incorreta!'
         })
     }
 
@@ -83,7 +83,7 @@ class UserController {
 
     await User.update(req.body, { where: { id } })
 
-    return res.status(200).json({ mensage: 'Usuario atualizado com sucesso!' })
+    return res.status(200).json({ mensage: 'Usuario atualizado com sucesso!!' })
   }
 }
 
