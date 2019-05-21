@@ -47,6 +47,29 @@ class UserController {
     return res.status(200).json(users)
   }
 
+  async login(req, res) {
+    const { email, password } = req.body
+
+    const user = await User.findOne({ where: { email } })
+    if (!user) {
+      return res
+        .status(400)
+        .json({
+          error: 'Usuario inexistente'
+        })
+    } else if (user.password_hash !== password) {
+      return res
+        .status(400)
+        .json({
+          error: 'Senha incorreta'
+        })
+    }
+
+    return res
+      .status(200)
+      .json({ token: user.token })
+  }
+
   // atualiza usuario
   async update(req, res) {
     const id = req.params.id
