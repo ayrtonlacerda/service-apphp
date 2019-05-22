@@ -2,6 +2,10 @@ const databaseConfig = require('../../config/database')
 const knex = require('knex')(databaseConfig)
 const { Form, User, Discipline } = require('../models')
 
+const multerConfig = require('../../config/multer')
+const upload = require('multer')(multerConfig)
+
+
 
 class FormController {
   // cria uma tabela de form
@@ -31,7 +35,8 @@ class FormController {
 
     const query = await Form.findAll({
       where: {
-        discipline_id: form.discipline
+        discipline_id: form.discipline,
+        table_name: form.form_name
       }
     })
 
@@ -59,37 +64,120 @@ class FormController {
         data: form
       })
       console.log('---------------------fiz a relaçao------------------------')
-      const table = knex.schema.hasTable(form.form_name).then(function (exists) {
-        if (!exists) {
-          return knex.schema.createTable(form.form_name, function (t) {
-            t.increments();
-            t.timestamps();
-          });
-        }
-      });
+      const table = await knex.schema.hasTable(form.form_name)
+      if (!table) {
+        await knex.schema.createTable(form.form_name, function (t) {
+          t.increments()
+          t.integer('student_id')
+          t.timestamps()
+        })
+      }
+      console.log('---------------------construiu tabela------------------------')
 
+      var schemaTable = []
       form.steps.map(step => {
         step.components.map(async component => {
-
-          if (component.component_type === 'text' || component.component_type === 'scanner' || component.component_type === 'camera') {
-            await knex.schema.table(form.form_name, function (table) {
-              table.string(component.data_name)
-            })
+          if (component.component_type === 'text' ||
+            component.component_type === 'scanner' ||
+            component.component_type === 'camera' ||
+            component.component_type === 'ocr' ||
+            component.component_type === 'croqui' ||
+            component.component_type === 'audiorec') {
+            schemaTable = [
+              ...schemaTable,
+              {
+                name: component.data_name,
+                type: 'string'
+              }
+            ]
+          }
+          if (component.component_type === 'checkbox' || component.component_type === 'geoloc') {
+            schemaTable = [
+              ...schemaTable,
+              {
+                name: component.data_name,
+                type: 'json'
+              }
+            ]
+          }
+          if (component.component_type === 'radio') {
+            schemaTable = [
+              ...schemaTable,
+              {
+                name: component.data_name,
+                type: 'integer'
+              }
+            ]
           }
           if (component.component_type === 'date') {
-            await knex.schema.table(form.form_name, function (table) {
-              table.date(component.data_name)
-            })
+            schemaTable = [
+              ...schemaTable,
+              {
+                name: component.data_name,
+                type: 'date'
+              }
+            ]
           }
         })
       })
+
+
+      schemaTable.map(async item => {
+        if (item.type === 'string') {
+          await knex.schema.table(form.form_name, function (t) {
+            t.string(item.name)
+          })
+        }
+        if (item.type === 'json') {
+          await knex.schema.table(form.form_name, function (t) {
+            t.string(item.name)
+          })
+        }
+        if (item.type === 'integer') {
+          await knex.schema.table(form.form_name, function (t) {
+            t.string(item.name)
+          })
+        }
+        if (item.type === 'date') {
+          await knex.schema.table(form.form_name, function (t) {
+            t.date(item.name)
+          })
+        }
+      })
+      /* .then(async function (exists) {
+        if (!exists) {
+          return await knex.schema.createTable(form.form_name, function (t) {
+            t.increments()
+            form.steps.map(step => {
+              step.components.map(async component => {
+
+                if (component.component_type === 'text' || component.component_type === 'scanner' || component.component_type === 'camera') {
+                  await knex.schema.table(form.form_name, function (t) {
+                    t.string(component.data_name)
+                  })
+                }
+                if (component.component_type === 'date') {
+                  await knex.schema.table(form.form_name, function (t) {
+                    t.date(component.data_name)
+                  })
+                }
+              })
+            })
+            t.timestamps()
+          });
+        }
+      }); */
+
+      console.log('---------------------fiz a relaçao------------------------', table)
+
+
       console.log('---------------------construiu tabela------------------------')
     }
     // verifica se ja existe uma tabela caso contrario cria uma
 
 
 
-    return res.status(200).json({ mensage: 'Sucesso', data: formResult })
+    return res.status(200).json({ mensage: 'Sucesso', data: formResult, schemaTable })
   }
 
   async index(req, res) {
@@ -128,6 +216,36 @@ class FormController {
       .json({ mensage: 'Formulario atualizado com sucesso' })
   }
 
+  async receiver(req, res) {
+    const { test_name, discipline_id, token } = req.headers
+    const files = req.files
+    const body = req.body
+    var insertTable = {}
+
+    files.map(file => {
+      insertTable = {
+        ...insertTable,
+        [file.fieldname]: file.filename,
+      }
+    })
+
+    Object.keys(body).map(key => {
+      insertTable = {
+        ...insertTable,
+        [key]: body[key],
+      }
+    })
+
+    await knex(test_name).insert(insertTable);
+
+
+    return res.status(200).json({ mensage: 'ok', file: req.files, body: req.body })
+
+  }
+
+  async show() {
+
+  }
 
 }
 

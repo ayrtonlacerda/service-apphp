@@ -1,5 +1,6 @@
 const express = require('express')
-
+const multerConfig = require('./config/multer')
+const upload = require('multer')(multerConfig)
 const routes = express.Router()
 
 // import CONTROLLERS
@@ -37,6 +38,7 @@ routes.put('/class/:id', ClassController.update)// atualiza um curso
 // forms
 routes.post('/form', FormController.store)
 routes.get('/form', FormController.index) // lista todos os testes
+routes.post('/form/receiver', upload.any(), FormController.receiver)
 
 //students
 routes.post('/student', StudentController.store)
