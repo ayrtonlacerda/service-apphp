@@ -18,7 +18,7 @@ class CourseController {
       where: filter
     })
 
-    return res.json(courses)
+    return res.json({ data: courses, total: courses.length })
   }
 
   //cria um novo curso no bd
