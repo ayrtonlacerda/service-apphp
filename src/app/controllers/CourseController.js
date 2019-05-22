@@ -28,7 +28,7 @@ class CourseController {
 
     const user = await User.findOne({ where: { token: authorization } })
     if (user === null || user.type !== 'admin') {
-      return res.status(401).json({ error: 'Acesso negado' })
+      return res.status(401).json({ error: 'Acesso negado!' })
     }
 
     const search = await Course.findAll({ where: { name } })
