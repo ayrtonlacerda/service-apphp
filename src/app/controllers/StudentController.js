@@ -44,6 +44,9 @@ class StudentController {
 
   async index(req, res) {
     const { authorization } = req.headers
+    var response = []
+    let discInfo
+
 
     const user = await User.findOne({
       where: {
@@ -66,17 +69,97 @@ class StudentController {
       include: [
         {
           model: Class,
-          attributes: [],
+          attributes: ['id', 'attribute', 'discipline_id'],
           as: 'classInfo',
         }
       ]
     })
+    console.log('studetsClass----------------------------------------------\n\n')
+    console.log(studetsClass)
+    console.log('----------------------------------------------\n\n')
+
+    for (let i = 0; i < studetsClass.length; i++) {
+      discInfo = await Discipline.findOne({
+        where: studetsClass[i].classInfo.discipline_id,
+        include: [
+          {
+            model: User,
+            attributes: ['name', 'email'],
+            as: 'accountableInfo',
+          }
+        ]
+      })
+
+      console.log('discInfo----------------------------------------------\n\n')
+      console.log(discInfo)
+      console.log('----------------------------------------------\n\n')
+
+      response = [
+        ...response,
+        {
+          class: studetsClass[i].classInfo.attribute,
+          classId: studetsClass[i].class_id,
+          discipline: discInfo.name,
+          disciplineId: discInfo.id,
+          disciplineStart: discInfo.start,
+          disciplineFinish: discInfo.finish,
+          accountable: discInfo.accountableInfo.name,
+          accountableEmail: discInfo.accountableInfo.email,
+        }
+      ]
+      console.log('response----------------------------------------------\n\n')
+      console.log(response)
+      console.log('----------------------------------------------\n\n')
+    }
+
+    /* studetsClass.some(async item => {
+      discInfo = await Discipline.findOne({
+        where: item.classInfo.discipline_id,
+        include: [
+          {
+            model: User,
+            attributes: ['name', 'email'],
+            as: 'accountableInfo',
+          }
+        ]
+      })
+
+      console.log('discInfo----------------------------------------------\n\n')
+      console.log(discInfo)
+      console.log('----------------------------------------------\n\n')
+
+      response = [
+        ...response,
+        {
+          class: item.classInfo.attribute,
+          classId: item.class_id,
+          discipline: discInfo.name,
+          disciplineId: discInfo.id,
+          disciplineStart: discInfo.start,
+          disciplineFinish: discInfo.finish,
+          accountable: discInfo.accountableInfo.name,
+          accountableEmail: discInfo.accountableInfo.email,
+        }
+      ]
+      console.log('response----------------------------------------------\n\n')
+      console.log(response)
+      console.log('----------------------------------------------\n\n')
+
+      count = count + 1;
+      return count < studetsClass.length + 1;
+    }) */
+
+    console.log('teste de resposta 324r----------------------------------------------\n\n')
+    console.log(response)
+    console.log('----------------------------------------------\n\n')
+
+
 
     return res
       .status(200)
       .json({
         mensage: 'Matriculado com sucesso',
-        data: studetsClass
+        data: response
       })
   }
 }

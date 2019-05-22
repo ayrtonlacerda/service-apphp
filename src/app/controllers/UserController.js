@@ -1,14 +1,16 @@
 const { User, Class, Student } = require('../models')
+const crypto = require('crypto')
 
 class UserController {
   // cria um novo usuario
   async store(req, res) {
     const { email, type } = req.body
-    const { token } = req.headers
+    const { authorization } = req.headers
+    let token
 
     if (type === 'prof') {
-      if (token) {
-        const admin = await User.findOne({ where: { token } })
+      if (authorization) {
+        const admin = await User.findOne({ where: { authorization } })
         if (admin !== null) {
           if (admin.type !== 'admin') {
             return res.status(401).json({ error: ' Usuario não tem permissão de cadastrar professor' })
@@ -28,7 +30,10 @@ class UserController {
       return res.status(400).json({ error: 'Usuario ja cadastrado' })
     }
 
-    const user = await User.create(req.body)
+    token = crypto.randomBytes(32).toString('hex')
+
+    console.log(token)
+    const user = await User.create({ ...req.body, token })
 
     return res.status(200).json({
       mensage: "Cadastrado com sucesso",
