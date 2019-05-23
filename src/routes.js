@@ -10,6 +10,7 @@ const DisciplineControlle = require('./app/controllers/DisciplineController')
 const UserControlle = require('./app/controllers/UserController')
 const ClassController = require('./app/controllers/ClassController')
 const StudentController = require('./app/controllers/StudentController')
+const FileController = require('./app/controllers/FileController')
 
 // ------------------------ ROUTES --------------------
 
@@ -39,10 +40,14 @@ routes.put('/class/:id', ClassController.update)// atualiza um curso
 routes.post('/form', FormController.store)
 routes.get('/form', FormController.index) // lista todos os testes
 routes.post('/form/receiver', upload.any(), FormController.receiver)
+routes.get('/form/show/:id', FormController.show) // lista todos os testes
 
 //students
 routes.post('/student', StudentController.store)
 routes.get('/student', StudentController.index)
+
+// files
+routes.get('/files/:file', FileController.show)
 
 // test
 routes.get('/test', UserControlle.test) // lista todos os cursos

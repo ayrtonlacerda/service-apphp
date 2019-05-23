@@ -309,8 +309,57 @@ class FormController {
     }
   }
 
-  async show() {
+  async show(req, res) {
+    const student_id = req.params.id
+    const { test_name } = req.headers
+    let test
+    let user
+    let form
 
+    // verifia usuario
+    user = await User.findByPk(student_id)
+    if (!user) {
+      return res
+        .status(400)
+        .json({
+          mensage: 'usuario inexistente'
+        })
+    }
+
+    // verifica formulario
+    form = await Form.findOne({
+      where: {
+        table_name: test_name
+      }
+    })
+
+    if (!form) {
+      return res
+        .status(400)
+        .json({
+          mensage: 'teste inexistente'
+        })
+    }
+
+    try {
+      test = await knex(test_name).where({ student_id })
+
+      return res
+        .status(200)
+        .json({
+          mensage: 'Success',
+          student_id,
+          test_name,
+          data: test
+        })
+    } catch (err) {
+      return res
+        .status(500)
+        .json({
+          error: 'Erro internal',
+          err
+        })
+    }
   }
 
 }
