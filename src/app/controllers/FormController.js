@@ -21,11 +21,11 @@ class FormController {
     })
 
     if (!user) {
-      return res.status(200).json({
+      return res.status(401).json({
         mensage: 'Você tem que esta logado para cadastrar formularios'
       })
     } else if (user.type === 'student') {
-      return res.status(200).json({
+      return res.status(401).json({
         mensage: 'Usuario não autorizado'
       })
     }
@@ -71,6 +71,10 @@ class FormController {
           t.integer('student_id')
           t.timestamps()
         })
+      } else {
+        return res
+          .status(400)
+          .json({ error: 'O testes tem nome unico' })
       }
       console.log('---------------------construiu tabela------------------------')
 
@@ -217,10 +221,65 @@ class FormController {
   }
 
   async receiver(req, res) {
-    const { test_name, discipline_id, token } = req.headers
+    const { test_name, discipline_id, authorization } = req.headers
     const files = req.files
     const body = req.body
     var insertTable = {}
+    let user
+    let test
+
+    try {
+      user = await User.findOne({
+        where: {
+          token: authorization
+        }
+      })
+    } catch (error) {
+      return res
+        .status(500)
+        .json({
+          error: 'error interno - USER',
+          data: error
+        })
+    }
+
+
+    // verica usuario
+    if (!user) {
+      return res
+        .status(400)
+        .json({ error: 'usuario nao encontrado' })
+    }
+
+    try {
+      test = await Form.findAll({
+        where: {
+          discipline_id,
+          table_name: test_name
+        }
+      })
+    } catch (error) {
+      return res
+        .status(500)
+        .json({
+          error: 'error interno - FORM',
+          data: error
+        })
+    }
+
+
+
+    // verifica formulario
+    if (!test) {
+      return res
+        .status(400)
+        .json({ error: 'Teste não encontrado' })
+    }
+
+    insertTable = {
+      ...insertTable,
+      student_id: user.id
+    }
 
     files.map(file => {
       insertTable = {
@@ -236,11 +295,18 @@ class FormController {
       }
     })
 
-    await knex(test_name).insert(insertTable);
+    try {
+      await knex(test_name).insert(insertTable);
 
-
-    return res.status(200).json({ mensage: 'ok', file: req.files, body: req.body })
-
+      return res.status(200).json({ mensage: 'ok', file: req.files, body: req.body })
+    } catch (error) {
+      return res
+        .status(400)
+        .json({
+          error: 'error - ISERT TABLE',
+          data: error
+        })
+    }
   }
 
   async show() {
