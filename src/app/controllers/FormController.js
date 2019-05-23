@@ -81,9 +81,22 @@ class FormController {
       var schemaTable = []
       form.steps.map(step => {
         step.components.map(async component => {
+          if (component.component_type === 'camera') {
+            schemaTable = [
+              ...schemaTable,
+              {
+                name: component.data_name,
+                type: 'integer'
+              },
+              {
+                name: `leg_${component.data_name}`,
+                type: 'integer'
+              }
+            ]
+          }
+
           if (component.component_type === 'text' ||
             component.component_type === 'scanner' ||
-            component.component_type === 'camera' ||
             component.component_type === 'ocr' ||
             component.component_type === 'croqui' ||
             component.component_type === 'audiorec') {
