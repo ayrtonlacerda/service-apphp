@@ -74,7 +74,7 @@ class FormController {
       } else {
         return res
           .status(400)
-          .json({ error: 'O testes tem nome unico' })
+          .json({ error: 'O testes tem nome unico!' })
       }
       console.log('---------------------construiu tabela------------------------')
 
