@@ -228,6 +228,8 @@ class FormController {
     let user
     let test
 
+    console.log(test_name, discipline_id, authorization, body)
+
     try {
       user = await User.findOne({
         where: {
@@ -303,8 +305,10 @@ class FormController {
       return res
         .status(400)
         .json({
-          error: 'error - ISERT TABLE',
-          data: error
+          error: 'error - INSERT TABLE',
+          data: error,
+          insertTable,
+          test_name
         })
     }
   }
