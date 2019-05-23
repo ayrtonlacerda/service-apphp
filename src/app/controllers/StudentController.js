@@ -74,6 +74,12 @@ class StudentController {
         }
       ]
     })
+
+    if (studetsClass.length === 0) {
+      return res
+        .status(206)
+        .json({ mensage: 'Não esta matriculado em nenhuma turma' })
+    }
     console.log('studetsClass----------------------------------------------\n\n')
     console.log(studetsClass)
     console.log('----------------------------------------------\n\n')
@@ -89,6 +95,12 @@ class StudentController {
           }
         ]
       })
+
+      if (!discInfo) {
+        return res
+          .status(500)
+          .json({ error: 'Error interno' })
+      }
 
       console.log('discInfo----------------------------------------------\n\n')
       console.log(discInfo)
@@ -112,43 +124,6 @@ class StudentController {
       console.log('----------------------------------------------\n\n')
     }
 
-    /* studetsClass.some(async item => {
-      discInfo = await Discipline.findOne({
-        where: item.classInfo.discipline_id,
-        include: [
-          {
-            model: User,
-            attributes: ['name', 'email'],
-            as: 'accountableInfo',
-          }
-        ]
-      })
-
-      console.log('discInfo----------------------------------------------\n\n')
-      console.log(discInfo)
-      console.log('----------------------------------------------\n\n')
-
-      response = [
-        ...response,
-        {
-          class: item.classInfo.attribute,
-          classId: item.class_id,
-          discipline: discInfo.name,
-          disciplineId: discInfo.id,
-          disciplineStart: discInfo.start,
-          disciplineFinish: discInfo.finish,
-          accountable: discInfo.accountableInfo.name,
-          accountableEmail: discInfo.accountableInfo.email,
-        }
-      ]
-      console.log('response----------------------------------------------\n\n')
-      console.log(response)
-      console.log('----------------------------------------------\n\n')
-
-      count = count + 1;
-      return count < studetsClass.length + 1;
-    }) */
-
     console.log('teste de resposta 324r----------------------------------------------\n\n')
     console.log(response)
     console.log('----------------------------------------------\n\n')
@@ -158,7 +133,7 @@ class StudentController {
     return res
       .status(200)
       .json({
-        mensage: 'Matriculado com sucesso',
+        total: response.length,
         data: response
       })
   }
