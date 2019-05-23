@@ -2,6 +2,7 @@
 1. [User](https://github.com/ayrtonlacerda/service-apphp/blob/docs/docs/user.md "User")
 2. [Course](https://github.com/ayrtonlacerda/service-apphp/blob/docs/docs/course.md "Course")
 3. [Form](https://github.com/ayrtonlacerda/service-apphp/blob/docs/docs/form.md "Form")
+4. [Student](https://github.com/ayrtonlacerda/service-apphp/blob/docs/docs/student.md "Student")
 
 ##  Bibliotecas
 
