@@ -21,11 +21,11 @@ class FormController {
     })
 
     if (!user) {
-      return res.status(200).json({
+      return res.status(401).json({
         mensage: 'Você tem que esta logado para cadastrar formularios'
       })
     } else if (user.type === 'student') {
-      return res.status(200).json({
+      return res.status(400).json({
         mensage: 'Usuario não autorizado'
       })
     }

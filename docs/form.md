@@ -196,6 +196,8 @@ Obs :  o camapo "discipline" foi adicionado ao formulario, que respresenta a que
 | :------------: | :------------: |
 |  200 | Success |
 |  400 |"Ja existe esse teste para essa disciplina" |
+|  400 |"não existe a disciplina" |
+|  400 |"Os testes tem que ter um nome unico" |
 |  401 | ""Você tem que esta logado para cadastrar formularios"" |
 |  401 | "Usuario não autorizad" |
 | 500  |  "error interno" |
