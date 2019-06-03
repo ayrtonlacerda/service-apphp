@@ -175,7 +175,7 @@ class StudentController {
     } catch (error) {
       return res
         .status(500)
-        .json({ mensage: 'SEVERAL ERROR - STUDENT', error })
+        .json({ mensage: 'SEVERAL ERROR - STUDENT!', error })
     }
 
     for (let i = 0; i < studentsOfClass.length; i++) {
