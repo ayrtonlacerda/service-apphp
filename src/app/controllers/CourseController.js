@@ -14,11 +14,19 @@ class CourseController {
         name: req.query.course_name
       }
     }
-    const courses = await Course.findAll({
-      where: filter
-    })
 
-    return res.json({ data: courses, total: courses.length })
+    try {
+      const courses = await Course.findAll({
+        where: filter
+      })
+
+      return res.json({ data: courses, total: courses.length })
+    } catch (error) {
+      return res.status(500).json({ error: error, mensage: 'SEVERAL ERROR' })
+    }
+
+
+
   }
 
   //cria um novo curso no bd
@@ -26,42 +34,67 @@ class CourseController {
     const { name } = req.body
     const { authorization } = req.headers
 
-    const user = await User.findOne({ where: { token: authorization } })
-    if (user === null || user.type !== 'admin') {
-      return res.status(401).json({ error: 'Acesso negado!' })
+    try {
+      const user = await User.findOne({ where: { token: authorization } })
+      if (user === null || user.type !== 'admin') {
+        return res.status(401).json({ error: 'Acesso negado!' })
+      }
+    } catch (error) {
+      return res.status(500).json({ mensage: 'SEVERAL ERROR - USER', error: error })
     }
 
-    const search = await Course.findAll({ where: { name } })
-    console.log(authorization)
-    if (search.length !== 0) {
-      return res.status(400).json({ error: 'Ja existe esse curso' })
+
+    try {
+      const search = await Course.findAll({ where: { name } })
+      console.log(authorization)
+      if (search.length !== 0) {
+        return res.status(400).json({ error: 'Ja existe esse curso' })
+      }
+    } catch (error) {
+      return res.status(500).json({ mensage: 'SEVERAL ERROR - COURSE', error: error })
+    }
+
+    try {
+      const course = await Course.create(req.body)
+
+      return res.json(course)
+    } catch (error) {
+      return res.status(500).json({ mensage: 'SEVERAL ERROR - CREATE COURSE', error: error })
     }
 
 
-    const course = await Course.create(req.body)
 
-    return res.json(course)
   }
 
   // atualiza algum curso no bd
   async update(req, res) {
     const id = req.params.id
 
-    const user = await User.findOne({ where: { token: authorization } })
-    if (user === null || user.type !== 'admin') {
-      return res.status(401).json({ error: 'Acesso negado' })
+    try {
+      const user = await User.findOne({ where: { token: authorization } })
+      if (user === null || user.type !== 'admin') {
+        return res.status(401).json({ error: 'Acesso negado' })
+      }
+    } catch (error) {
+      return res.status(500).json({ mensage: 'SEVERAL ERROR - USER', error: error })
     }
 
-    const test = await Course.findByPk(id)
-    console.log(id)
-    if (test === null) {
-      return res.status(400).json({ error: 'Não ha esse curso' })
+    try {
+      const test = await Course.findByPk(id)
+      console.log(id)
+      if (test === null) {
+        return res.status(400).json({ error: 'Não ha esse curso' })
+      }
+    } catch (error) {
+      return res.status(500).json({ mensage: 'SEVERAL ERROR - COURSE', error: error })
     }
 
-    const course = await Course.update(req.body, { where: { id } })
-
-
-    return res.status(200).json({ mensage: 'Atualização feita com sucesso!' })
+    try {
+      const course = await Course.update(req.body, { where: { id } })
+      return res.status(200).json({ mensage: 'Atualização feita com sucesso!' })
+    } catch (error) {
+      return res.status(500).json({ mensage: 'SEVERAL ERROR - UPDATE COURSE', error: error })
+    }
   }
 
 }

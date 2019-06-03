@@ -10,12 +10,17 @@ class UserController {
 
     if (type === 'prof') {
       if (authorization) {
-        const admin = await User.findOne({ where: { authorization } })
-        if (admin !== null) {
-          if (admin.type !== 'admin') {
-            return res.status(401).json({ error: ' Usuario não tem permissão de cadastrar professor' })
+        try {
+          const admin = await User.findOne({ where: { authorization } })
+          if (admin !== null) {
+            if (admin.type !== 'admin') {
+              return res.status(401).json({ error: ' Usuario não tem permissão de cadastrar professor' })
+            }
           }
+        } catch (error) {
+          return res.status(500).json({ error: 'Error Interno' })
         }
+
       } else {
         return res.status(401).json({ error: 'Precisa de um usuario admin' })
       }

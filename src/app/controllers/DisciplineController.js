@@ -3,19 +3,30 @@ const { Discipline, User, Course } = require('../models')
 class DisciplineController {
   // cria nova disicplina
   async store(req, res) {
-    const { name, accountable } = req.body
+    const { name, accountable, course_id } = req.body
     const { authorization } = req.headers
     var disc = req.body
+    let user
+    // user querys
+    try {
+      user = await User.findOne({ where: { token: authorization } })
+      if (user === null) {
+        return res.status(401).json({ error: 'Acesso negado' })
+      }
+    } catch (error) {
+      return res.status(500).json({ mensage: 'SEVERAL ERROR - USER', error: error })
+    }
 
-
-    const user = await User.findOne({ where: { token: authorization } })
 
     if (user.type === 'admin') {
       if (!accountable) {
         return res.status(400).json({ error: 'A disciplina precisa de um responsavel' })
       } else {
         const prof = await User.findByPk(accountable)
-        if (prof.type !== 'prof') {
+        console.log('prof\n\n', prof)
+        if (prof === null) {
+          console.log('\n\n', prof)
+        } else if (prof.type !== 'prof') {
           return res.status(400).json({ error: 'O usuario não é um professor' })
         }
       }
@@ -25,14 +36,33 @@ class DisciplineController {
       return res.status(401).json({ error: 'O usuario sem autorização', user })
     }
 
-    const query = await Discipline.findAll({ where: { name } })
-    if (query.length !== 0) {
-      return res.status(400).json({ error: 'Disicplina ja existente' })
+    // course query
+    try {
+      const course = await Course.findByPk(course_id)
+
+      if (course === null) {
+        return res.status(400).json({ error: 'Curso não existe' })
+      }
+    } catch (error) {
+      return res.status(500).json({ mensage: 'SEVERAL ERROR - COURSE', error: error })
     }
 
-    const discipline = await Discipline.create(req.body)
+    try {
+      const query = await Discipline.findAll({ where: { name } })
+      if (query.length !== 0) {
+        return res.status(400).json({ error: 'Disicplina ja existente' })
+      }
+    } catch (error) {
+      return res.status(500).json({ mensage: 'SEVERAL ERROR - DISCIPLINE', error: error })
+    }
 
-    return res.status(200).json({ discipline, user })
+    try {
+      const discipline = await Discipline.create(req.body)
+
+      return res.status(200).json({ discipline, user })
+    } catch (error) {
+      return res.status(500).json({ mensage: 'SEVERAL ERROR - CREATE DISCIPLINE', error: error })
+    }
   }
 
   // lista todas as disciplinas
