@@ -18,17 +18,14 @@ class ClassController {
 
     const query = await Class.findAll({ where: { attribute } })
     if (query.length !== 0) {
-      query.map(item => {
-        if (item.discipline_id === discipline_id)
-          return res.status(400).json({ error: 'Classe ja existente', data: item })
-      })
+
+      for (let i = 0; i < query.length; index++) {
+        const element = query[i];
+        if (element.discipline_id === discipline_id) {
+          return res.status(400).json({ error: 'Classe ja existente', data: query[i] })
+        }
+      }
     }
-
-
-    /* const user = await User.findByPk(accountable)
-    if (user.type !== 'prof') {
-      return res.status(400).json({ error: 'O usuario nao tem autorização pra ser um responsavel' })
-    } */
 
     const classResult = await Class.create({ ...req.body, code })
 

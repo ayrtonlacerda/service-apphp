@@ -45,6 +45,8 @@ routes.get('/form/show/:id', FormController.show) // lista todos os testes
 //students
 routes.post('/student', StudentController.store)
 routes.get('/student', StudentController.index)
+routes.get('/student/:id', StudentController.show)
+
 
 // files
 routes.get('/files/:file', FileController.show)

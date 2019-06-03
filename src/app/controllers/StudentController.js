@@ -31,6 +31,23 @@ class StudentController {
         .json({ error: 'Classe inexistente' })
     }
 
+    // verifica se ja esta matriculado
+    const studentExist = await Student.findAll({ where: { student_id: user.id } })
+    console.log(studentExist)
+
+    if (studentExist.length !== 0) {
+      for (let i = 0; i < studentExist.length; i++) {
+        const element = studentExist[i];
+        if (element.class_id === classResult.id) {
+          return res
+            .status(400)
+            .json({ error: 'Já esta matriculado' })
+        }
+      }
+    }
+
+
+
     const student = await Student.create({
       class_id: classResult.id,
       student_id: user.id
@@ -47,17 +64,23 @@ class StudentController {
     var response = []
     let discInfo
 
-
-    const user = await User.findOne({
-      where: {
-        token: authorization
-      },
-    })
-    if (!user) {
+    try {
+      const user = await User.findOne({
+        where: {
+          token: authorization
+        },
+      })
+      if (!user) {
+        return res
+          .status(400)
+          .json({ error: 'Usuario inexistente' })
+      }
+    } catch (error) {
       return res
-        .status(400)
-        .json({ error: 'Usuario inexistente' })
+        .status(500)
+        .json({ mensage: 'SEVERAL ERROR - USER', error: error })
     }
+
 
     const studetsClass = await Student.findAll({
       where: {
@@ -136,6 +159,44 @@ class StudentController {
         total: response.length,
         data: response
       })
+  }
+
+  async show(req, res) {
+    const { id } = req.params
+    let arrayStudents = []
+    let studentsOfClass
+    try {
+      studentsOfClass = await Student.findAll({ where: { class_id: id } })
+      if (studentsOfClass.length === 0) {
+        return res
+          .status(200)
+          .json(studentsOfClass)
+      }
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ mensage: 'SEVERAL ERROR - STUDENT', error })
+    }
+
+    for (let i = 0; i < studentsOfClass.length; i++) {
+      let user
+      const element = studentsOfClass[i];
+      user = await User.findByPk(element.student_id)
+      arrayStudents = [
+        ...arrayStudents,
+        {
+          name: user.name,
+          email: user.email,
+          id: user.id
+        }
+
+      ]
+    }
+
+    return res
+      .status(200)
+      .json(arrayStudents)
+
   }
 }
 
