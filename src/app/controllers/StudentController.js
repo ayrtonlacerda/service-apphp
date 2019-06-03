@@ -5,13 +5,22 @@ class StudentController {
   async store(req, res) {
     const { authorization } = req.headers
     const { code } = req.body
-
+    let user
     // verifica se o usuario pode se matricular
-    const user = await User.findOne({
-      where: {
-        token: authorization
-      }
-    })
+
+    try {
+      user = await User.findOne({
+        where: {
+          token: authorization
+        }
+      })
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ mensage: 'SEVERAL ERROR', error })
+    }
+
+    console.log("\n\nUSer\n\n", user)
     if (!user) {
       return res
         .status(400)
@@ -63,9 +72,11 @@ class StudentController {
     const { authorization } = req.headers
     var response = []
     let discInfo
+    let user
+    let queryUser = {}
 
     try {
-      const user = await User.findOne({
+      user = await User.findOne({
         where: {
           token: authorization
         },
@@ -81,10 +92,9 @@ class StudentController {
         .json({ mensage: 'SEVERAL ERROR - USER', error: error })
     }
 
-
     const studetsClass = await Student.findAll({
       where: {
-        student_id: user.id
+        student_id: user.id,
       },
       raw: true,
       nest: true,
@@ -140,6 +150,9 @@ class StudentController {
           disciplineFinish: discInfo.finish,
           accountable: discInfo.accountableInfo.name,
           accountableEmail: discInfo.accountableInfo.email,
+          test1: studetsClass[i].test1,
+          test2: studetsClass[i].test2,
+          test3: studetsClass[i].test3,
         }
       ]
       console.log('response----------------------------------------------\n\n')
@@ -152,13 +165,13 @@ class StudentController {
     console.log('----------------------------------------------\n\n')
 
 
-
     return res
       .status(200)
       .json({
         total: response.length,
         data: response
       })
+
   }
 
   async show(req, res) {

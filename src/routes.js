@@ -11,6 +11,7 @@ const UserControlle = require('./app/controllers/UserController')
 const ClassController = require('./app/controllers/ClassController')
 const StudentController = require('./app/controllers/StudentController')
 const FileController = require('./app/controllers/FileController')
+const TestController = require('./app/controllers/TestController')
 
 // ------------------------ ROUTES --------------------
 
@@ -46,6 +47,9 @@ routes.get('/form/show/:id', FormController.show) // lista todos os testes
 routes.post('/student', StudentController.store)
 routes.get('/student', StudentController.index)
 routes.get('/student/:id', StudentController.show)
+
+// testes
+routes.post('/tests/:id', TestController.show)
 
 
 // files
