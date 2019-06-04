@@ -86,6 +86,12 @@ class TestController {
       .status(200)
       .json(testUser[0])
   }
+
+  async index(req, res) {
+    return res
+      .status(200)
+      .json({ mensage: 'Funcionou' })
+  }
 }
 
 module.exports = new TestController()

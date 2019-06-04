@@ -50,6 +50,7 @@ routes.get('/student/:id', StudentController.show)
 
 // testes
 routes.post('/tests', TestController.show)
+routes.get('/tests', TestController.index)
 
 
 // files
