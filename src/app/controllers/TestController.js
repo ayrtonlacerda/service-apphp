@@ -16,6 +16,12 @@ class TestController {
     let user
     let testUser = []
 
+    if (!authorization) {
+      return res
+        .status(400)
+        .json({ mensage: 'Acesso negado' })
+    }
+
     try {
       user = await User.findOne({ where: { token: authorization } })
       if (!user) {
