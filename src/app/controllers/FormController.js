@@ -86,7 +86,7 @@ class FormController {
               ...schemaTable,
               {
                 name: component.data_name,
-                type: 'integer'
+                type: 'array'
               },
               {
                 name: `leg_${component.data_name}`,
@@ -158,6 +158,11 @@ class FormController {
         if (item.type === 'date') {
           await knex.schema.table(form.form_name, function (t) {
             t.date(item.name)
+          })
+        }
+        if (item.type === 'array') {
+          await knex.schema.table(form.form_name, function (t) {
+            t.specificType(item.name, 'text[]')
           })
         }
       })
@@ -296,12 +301,32 @@ class FormController {
       student_id: user.id
     }
 
+
     files.map(file => {
       insertTable = {
         ...insertTable,
-        [file.fieldname]: file.filename,
+        [file.fieldname]: []
       }
     })
+
+    files.map(file => {
+      Object.keys(insertTable).map(key => {
+        if (key === file.fieldname) {
+          console.log('\nkeyyy and fildname', key, file.fieldname, '\n\n')
+          insertTable[key] = [...insertTable[key], file.filename]
+          console.log('\narray', insertTable[key], '\n\n')
+        }
+      })
+
+      console.log('\ninsertTable', insertTable, '\n\n')
+    })
+
+
+
+
+
+
+
 
     Object.keys(body).map(key => {
       insertTable = {
@@ -310,10 +335,12 @@ class FormController {
       }
     })
 
+    console.log('\n\n\n', insertTable, '\n\n\n')
+
     try {
       await knex(test_name).insert(insertTable);
 
-      return res.status(200).json({ mensage: 'ok', file: req.files, body: req.body })
+      return res.status(200).json({ mensage: 'ok', file: req.files, body: req.body, insertTable })
     } catch (error) {
       return res
         .status(400)
