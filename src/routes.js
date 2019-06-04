@@ -49,7 +49,7 @@ routes.get('/student', StudentController.index)
 routes.get('/student/:id', StudentController.show)
 
 // testes
-routes.post('/tests/:id', TestController.show)
+routes.post('/tests', TestController.show)
 
 
 // files
