@@ -305,23 +305,30 @@ class FormController {
     files.map(file => {
       insertTable = {
         ...insertTable,
-        [file.fieldname]: []
+        [file.fieldname]: file.filename
       }
     })
-
-    files.map(file => {
-      Object.keys(insertTable).map(key => {
-        if (key === file.fieldname) {
-          console.log('\nkeyyy and fildname', key, file.fieldname, '\n\n')
-          insertTable[key] = [...insertTable[key], file.filename]
-          console.log('\narray', insertTable[key], '\n\n')
-        }
-      })
-
-      console.log('\ninsertTable', insertTable, '\n\n')
-    })
-
-
+    /*
+        files.map(file => {
+          insertTable = {
+            ...insertTable,
+            [file.fieldname]: []
+          }
+        })
+     
+        files.map(file => {
+          Object.keys(insertTable).map(key => {
+            if (key === file.fieldname) {
+              console.log('\nkeyyy and fildname', key, file.fieldname, '\n\n')
+              insertTable[key] = [...insertTable[key], file.filename]
+              console.log('\narray', insertTable[key], '\n\n')
+            }
+          })
+    
+          console.log('\ninsertTable', insertTable, '\n\n')
+        })
+    
+     */
 
 
 
