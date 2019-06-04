@@ -9,8 +9,7 @@ class TestController {
 
   // teste e o usuario
   async show(req, res) {
-    const { test } = req.body;
-    const { id } = req.params;
+    const { test, id } = req.body;
     const { authorization } = req.headers;
 
     let user
@@ -42,7 +41,7 @@ class TestController {
     }
 
     try {
-      user = await User.findOne({ where: { token: id } })
+      user = await User.findByPk(id)
       if (!user) {
         return res
           .status(400)
@@ -51,7 +50,7 @@ class TestController {
     } catch (error) {
       return res
         .status(500)
-        .json({ mensage: 'SEVERAL ERROR - USER', error })
+        .json({ mensage: 'SEVERAL ERROR - USER ID', error })
     }
 
 
