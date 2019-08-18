@@ -11,7 +11,8 @@ class UserController {
     if (type === 'prof') {
       if (authorization) {
         try {
-          const admin = await User.findOne({ where: { authorization } })
+          const admin = await User.findOne({ where: { token: authorization } })
+          console.log('\n\nteste admin\n\n', admin)
           if (admin !== null) {
             if (admin.type !== 'admin') {
               return res.status(401).json({ error: ' Usuario não tem permissão de cadastrar professor' })
