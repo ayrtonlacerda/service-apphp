@@ -5,6 +5,11 @@ const { Form, User, Discipline } = require('../models')
 const multerConfig = require('../../config/multer')
 const upload = require('multer')(multerConfig)
 
+var PizZip = require('pizzip');
+var Docxtemplater = require('docxtemplater');
+var fs = require('fs');
+var path = require('path');
+var ImageModule = require("docxtemplater-image-module");
 
 
 class FormController {
@@ -81,7 +86,7 @@ class FormController {
       var schemaTable = []
       form.steps.map(step => {
         step.components.map(async component => {
-          if (component.component_type === 'camera') {
+          if (component.component_type === 'camera' || component.component_type === 'croqui') {
             schemaTable = [
               ...schemaTable,
               {
@@ -98,7 +103,6 @@ class FormController {
           if (component.component_type === 'text' ||
             component.component_type === 'scanner' ||
             component.component_type === 'ocr' ||
-            component.component_type === 'croqui' ||
             component.component_type === 'audiorec') {
             schemaTable = [
               ...schemaTable,
@@ -195,9 +199,6 @@ class FormController {
 
       console.log('---------------------construiu tabela------------------------')
     }
-    // verifica se ja existe uma tabela caso contrario cria uma
-
-
 
     return res.status(200).json({ mensage: 'Sucesso', data: formResult, schemaTable })
   }
@@ -263,7 +264,6 @@ class FormController {
         })
     }
 
-
     // verica usuario
     if (!user) {
       return res
@@ -301,38 +301,32 @@ class FormController {
       student_id: user.id
     }
 
+    /* 
+        files.map(file => {
+          insertTable = {
+            ...insertTable,
+            [file.fieldname]: file.filename
+          }
+        }) */
 
     files.map(file => {
       insertTable = {
         ...insertTable,
-        [file.fieldname]: file.filename
+        [file.fieldname]: []
       }
     })
-    /*
-        files.map(file => {
-          insertTable = {
-            ...insertTable,
-            [file.fieldname]: []
-          }
-        })
-     
-        files.map(file => {
-          Object.keys(insertTable).map(key => {
-            if (key === file.fieldname) {
-              console.log('\nkeyyy and fildname', key, file.fieldname, '\n\n')
-              insertTable[key] = [...insertTable[key], file.filename]
-              console.log('\narray', insertTable[key], '\n\n')
-            }
-          })
-    
-          console.log('\ninsertTable', insertTable, '\n\n')
-        })
-    
-     */
 
+    files.map(file => {
+      Object.keys(insertTable).map(key => {
+        if (key === file.fieldname) {
+          console.log('\nkeyyy and fildname', key, file.fieldname, '\n\n')
+          insertTable[key] = [...insertTable[key], file.filename]
+          console.log('\narray', insertTable[key], '\n\n')
+        }
+      })
 
-
-
+      console.log('\ninsertTable', insertTable, '\n\n')
+    })
 
 
     Object.keys(body).map(key => {
@@ -343,6 +337,69 @@ class FormController {
     })
 
     console.log('\n\n\n', insertTable, '\n\n\n')
+
+    //create docs
+    let imagesDoc = {};
+    files.map(item => {
+      imagesDoc[item.fieldname] = item.path;
+    })
+
+    let content;
+    try {
+      content = fs.readFileSync(path.resolve(__dirname, '..', '..', 'assets', `${test_name}-${discipline_id}.docx`), 'binary')
+    } catch (error) {
+      return res.status(404).json({ error: "ERROR FILE", mensage: 'Não existe template em docs x para o formulario' });
+    }
+
+
+    var opts = {};
+    opts.centered = false;
+    opts.getImage = function (tagValue, tagName) {
+      return fs.readFileSync(tagValue);
+    };
+    opts.getSize = function (img, tagValue, tagName) {
+      return [300, 300];
+    };
+
+    var imageModule = new ImageModule(opts);
+
+    var zip = new PizZip(content);
+    var doc = new Docxtemplater();
+    doc.attachModule(imageModule)
+    doc.loadZip(zip)
+      .setData({
+        ...body,
+        ...imagesDoc,
+        test_name,
+        authorization: user.name,
+      })
+      .render();
+
+    //set the templateVariables
+
+
+    try {
+      // render the document (replace all occurences of {first_name} by John, {last_name} by Doe, ...)
+      doc.render()
+    }
+    catch (error) {
+      var e = {
+        message: error.message,
+        name: error.name,
+        stack: error.stack,
+        properties: error.properties,
+      }
+      console.log(JSON.stringify({ error: e }));
+      // The error thrown here contains additional information when logged with JSON.stringify (it contains a property object).
+      throw error;
+    }
+
+    var buf = doc.getZip().generate({ type: 'nodebuffer', compression: "DEFLATE" });
+
+    // buf is a nodejs buffer, you can either write it to a file or do anything else with it.
+    fs.writeFileSync(path.resolve(__dirname, '..', '..', '..', 'tmp', 'uploads', `${test_name}-${discipline_id}-${authorization}.docx`), buf);
+
+
 
     try {
       await knex(test_name).insert(insertTable);
@@ -413,6 +470,9 @@ class FormController {
     }
   }
 
+  async storeDoc(req, res) {
+    return res.status(201).json({ mensage: 'upload com sucesso' })
+  }
 }
 
 module.exports = new FormController()
