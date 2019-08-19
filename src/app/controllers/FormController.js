@@ -301,7 +301,7 @@ class FormController {
       student_id: user.id
     }
 
-    /* 
+    /*
         files.map(file => {
           insertTable = {
             ...insertTable,
@@ -471,7 +471,8 @@ class FormController {
   }
 
   async storeDoc(req, res) {
-    return res.status(201).json({ mensage: 'upload com sucesso' })
+    const body = req.body
+    return res.status(201).json({ mensage: 'upload com sucesso', body })
   }
 }
 
