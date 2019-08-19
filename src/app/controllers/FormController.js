@@ -471,8 +471,8 @@ class FormController {
   }
 
   async storeDoc(req, res) {
-    const body = req.body
-    return res.status(201).json({ mensage: 'upload com sucesso', body })
+    //const body = req.body
+    return res.status(201).json({ mensage: 'upload com sucesso',  })
   }
 }
 
