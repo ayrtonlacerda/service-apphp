@@ -348,7 +348,14 @@ class FormController {
     try {
       content = fs.readFileSync(path.resolve(__dirname, '..', '..', 'assets', `${test_name}-${discipline_id}.docx`), 'binary')
     } catch (error) {
-      return res.status(404).json({ error: "ERROR FILE", mensage: 'Não existe template em docs x para o formulario' });
+      return res
+        .status(404)
+        .json({
+          error: "ERROR FILE", mensage: 'Não existe template em docs x para o formulario',
+          test_name,
+          discipline_id,
+          docName:  `${test_name}-${discipline_id}.docx`,
+        });
     }
 
 
