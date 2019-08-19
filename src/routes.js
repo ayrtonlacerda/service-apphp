@@ -44,9 +44,7 @@ routes.post('/form', FormController.store)
 routes.get('/form', FormController.index) // lista todos os testes
 routes.post('/form/receiver', upload.any(), FormController.receiver)
 routes.get('/form/show/:id', FormController.show) // lista todos os testes
-// routes.get('/form/upload', FormController.storeDoc) //upload do arquivo de doc
-
-routes.get('/docs', FormController.storeDoc)
+routes.post('/form/upload', uploadDocs.any(), FormController.storeDoc) //upload do arquivo de doc
 
 //students
 routes.post('/student', StudentController.store)
