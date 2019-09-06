@@ -32,7 +32,7 @@ class UserController {
     // so admin pode adcionar prof
     const userResult = await User.findOne({ where: { email } })
     if (userResult !== null) {
-      // adicionar nova turma        
+      // adicionar nova turma
       return res.status(400).json({ error: 'Usuario ja cadastrado' })
     }
 
@@ -81,7 +81,8 @@ class UserController {
       .json({
         name: user.name,
         email: user.email,
-        token: user.token
+        token: user.token,
+        id: user.id,
       })
   }
 
