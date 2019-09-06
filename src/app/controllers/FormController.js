@@ -91,7 +91,7 @@ class FormController {
               ...schemaTable,
               {
                 name: component.data_name,
-                type: 'array'
+                type: 'string'
               },
               {
                 name: `leg_${component.data_name}`,
