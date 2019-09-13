@@ -69,7 +69,7 @@ class CourseController {
   // atualiza algum curso no bd
   async update(req, res) {
     const id = req.params.id
-    const { authorization } = res.headers
+    const { authorization } = req.headers
 
     try {
       const user = await User.findOne({ where: { token: authorization } })
