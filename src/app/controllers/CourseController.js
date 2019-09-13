@@ -92,7 +92,7 @@ class CourseController {
 
     try {
       const course = await Course.update(req.body, { where: { id } })
-      return res.status(200).json({ mensage: 'Atualização feita com sucesso!' })
+      return res.status(200).json({ id: id, mensage: 'Atualização feita com sucesso!', data: req.body })
     } catch (error) {
       return res.status(500).json({ mensage: 'SEVERAL ERROR - UPDATE COURSE', error: error })
     }
