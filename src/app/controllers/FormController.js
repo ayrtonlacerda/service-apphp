@@ -344,6 +344,8 @@ class FormController {
       imagesDoc[item.fieldname] = item.path;
     })
 
+    console.log('\n\n\n', imagesDoc, '\n\n\n')
+
     let content;
     try {
       content = fs.readFileSync(path.resolve(__dirname, '..', '..', 'assets', `${test_name}-${discipline_id}.docx`), 'binary')
@@ -354,7 +356,7 @@ class FormController {
           error: "ERROR FILE", mensage: 'Não existe template em docs x para o formulario',
           test_name,
           discipline_id,
-          docName:  `${test_name}-${discipline_id}.docx`,
+          docName: `${test_name}-${discipline_id}.docx`,
         });
     }
 
@@ -479,7 +481,7 @@ class FormController {
 
   async storeDoc(req, res) {
     //const body = req.body
-    return res.status(201).json({ mensage: 'upload com sucesso',  })
+    return res.status(201).json({ mensage: 'upload com sucesso', })
   }
 }
 
