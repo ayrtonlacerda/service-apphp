@@ -371,6 +371,7 @@ class FormController {
     };
 
     var imageModule = new ImageModule(opts);
+    console.log('fiz imagem');
 
     var zip = new PizZip(content);
     var doc = new Docxtemplater();
@@ -385,11 +386,13 @@ class FormController {
       .render();
 
     //set the templateVariables
-
+    console.log('cheghei aqui');
 
     try {
       // render the document (replace all occurences of {first_name} by John, {last_name} by Doe, ...)
       doc.render()
+      console.log('renderizei');
+
     }
     catch (error) {
       var e = {
@@ -407,7 +410,7 @@ class FormController {
 
     // buf is a nodejs buffer, you can either write it to a file or do anything else with it.
     fs.writeFileSync(path.resolve(__dirname, '..', '..', '..', 'tmp', 'uploads', `${test_name}-${discipline_id}-${authorization}.docx`), buf);
-
+    console.log('terminando');
 
 
     try {
