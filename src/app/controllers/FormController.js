@@ -378,22 +378,22 @@ class FormController {
     var doc = new Docxtemplater();
 
     console.log('nova instancia doc');
-    doc.loadZip(zip)
-      .attachModule(imageModule)
-      .setData({
-        ...body,
-        ...imagesDoc,
-        test_name,
-        authorization: user.name,
-      })
-      .render();
-
-    //set the templateVariables
-    console.log('cheghei aqui');
 
     try {
+      doc.loadZip(zip)
+        .attachModule(imageModule)
+        .setData({
+          ...body,
+          ...imagesDoc,
+          test_name,
+          authorization: user.name,
+        })
+        .render();
+
+      //set the templateVariables
+      console.log('cheghei aqui');
       // render the document (replace all occurences of {first_name} by John, {last_name} by Doe, ...)
-      doc.render()
+      // doc.render()
       console.log('renderizei');
 
     }
@@ -403,6 +403,8 @@ class FormController {
         name: error.name,
         stack: error.stack,
         properties: error.properties,
+        imagesDoc,
+        files,
       }
       console.log(JSON.stringify({ error: e }));
       // The error thrown here contains additional information when logged with JSON.stringify (it contains a property object).
