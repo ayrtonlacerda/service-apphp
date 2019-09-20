@@ -408,7 +408,7 @@ class FormController {
       }
       console.log(JSON.stringify({ error: e }));
       // The error thrown here contains additional information when logged with JSON.stringify (it contains a property object).
-      throw error;
+      return res(e).status(500);
     }
 
     var buf = doc.getZip().generate({ type: 'nodebuffer', compression: "DEFLATE" });
