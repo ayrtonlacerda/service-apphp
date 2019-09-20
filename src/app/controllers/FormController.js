@@ -386,7 +386,9 @@ class FormController {
     opts.centered = false;
     opts.getImage = function (tagValue, tagName) {
       console.log('tag value', tagValue, tagName);
-      return fs.readFileSync(tagValue);
+      if (tagValue) {
+        return fs.readFileSync(tagValue);
+      }
     };
     opts.getSize = function (img, tagValue, tagName) {
       return [300, 300];
