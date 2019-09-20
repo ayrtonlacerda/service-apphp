@@ -349,7 +349,7 @@ class FormController {
     })
 
 
-    console.log('\n\n\n tentei -->   ', imagesDoc, '\n\n\n', `${test_name}-${discipline_id}.docx`)
+    console.log('\n\n\n tentei -->   ', '\n\n', imagesDoc, '\n\n ---- body', body, '\n\n\n', `${test_name}-${discipline_id}.docx`)
 
     let content;
     try {
