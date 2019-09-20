@@ -362,9 +362,9 @@ class FormController {
         newBody[key] = body[key];
       }
     })
+    console.log('\n\n ############   NewBody', newBody, imagesDoc);
 
-
-    console.log('\n\n\n tentei -->   ', '\n\n', imagesDoc, '\n\n ---- body', body, '\n\n\n', `${test_name}-${discipline_id}.docx`)
+    console.log('\n\n\n tentei -->   ', '\n\n', imagesDoc, '\n\n --------------------- body\n\n', body, '\n\n\n', `${test_name}-${discipline_id}.docx`)
 
     let content;
     try {
