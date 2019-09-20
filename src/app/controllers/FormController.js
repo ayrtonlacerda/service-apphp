@@ -343,8 +343,11 @@ class FormController {
     //create docs
     let imagesDoc = {};
     files.map(item => {
-      imagesDoc[item.fieldname] = item.path;
+      if (item.path) { // diferente de null
+        imagesDoc[item.fieldname] = item.path;
+      }
     })
+
 
     console.log('\n\n\n tentei -->   ', imagesDoc, '\n\n\n', `${test_name}-${discipline_id}.docx`)
 
