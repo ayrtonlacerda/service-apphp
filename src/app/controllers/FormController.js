@@ -338,20 +338,7 @@ class FormController {
 
     console.log('\n\n\n', insertTable, '\n\n\n')
 
-    try {
-      await knex(test_name).insert(insertTable);
-      console.log('\n\n\n', { mensage: 'ok', file: req.files, body: req.body, insertTable })
-      // return res.status(200).json({ mensage: 'ok', file: req.files, body: req.body, insertTable })
-    } catch (error) {
-      return res
-        .status(400)
-        .json({
-          error: 'error - INSERT TABLE',
-          data: error,
-          insertTable,
-          test_name
-        })
-    }
+
 
     //create docs
     let imagesDoc = {};
@@ -433,6 +420,21 @@ class FormController {
     fs.writeFileSync(path.resolve(__dirname, '..', '..', '..', 'tmp', 'uploads', `${test_name}-${discipline_id}-${authorization}.docx`), buf);
     console.log('terminando');
 
+    // insert table
+    try {
+      await knex(test_name).insert(insertTable);
+      console.log('\n\n\n', { mensage: 'ok', file: req.files, body: req.body, insertTable })
+      // return res.status(200).json({ mensage: 'ok', file: req.files, body: req.body, insertTable })
+    } catch (error) {
+      return res
+        .status(400)
+        .json({
+          error: 'error - INSERT TABLE',
+          data: error,
+          insertTable,
+          test_name
+        })
+    }
   }
 
   async show(req, res) {
