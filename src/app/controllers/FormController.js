@@ -374,9 +374,12 @@ class FormController {
     console.log('fiz imagem');
 
     var zip = new PizZip(content);
+    console.log('fiz piz zip');
     var doc = new Docxtemplater();
-    doc.attachModule(imageModule)
+
+    console.log('nova instancia doc');
     doc.loadZip(zip)
+      .attachModule(imageModule)
       .setData({
         ...body,
         ...imagesDoc,
