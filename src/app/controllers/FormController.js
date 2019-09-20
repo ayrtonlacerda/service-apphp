@@ -320,7 +320,7 @@ class FormController {
       Object.keys(insertTable).map(key => {
         if (key === file.fieldname) {
           console.log('\nkeyyy and fildname', key, file.fieldname, '\n\n')
-          insertTable[key] = file.filename;
+          insertTable[key] = `${file.filename}`;
           console.log('\narray', insertTable[key], '\n\n')
         }
       })
