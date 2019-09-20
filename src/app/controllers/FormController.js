@@ -386,7 +386,7 @@ class FormController {
     opts.centered = false;
     opts.getImage = function (tagValue, tagName) {
       console.log('tag value', tagValue, tagName);
-      if (tagValue === null) {
+      if (tagValue !== null) {
         return fs.readFileSync(tagValue);
       }
       return null;
@@ -439,14 +439,14 @@ class FormController {
     var buf = doc.getZip().generate({ type: 'nodebuffer', compression: "DEFLATE" });
 
     // buf is a nodejs buffer, you can either write it to a file or do anything else with it.
-    fs.writeFileSync(path.resolve(__dirname, '..', '..', '..', 'tmp', 'uploads', `${test_name}-${discipline_id}-${authorization}.docx`), buf);
+    fs.writeFileSync(path.resolve(__dirname, '..', '..', '..', 'tmp', 'uploads', `${test_name}-${discipline_id}-${user.id}.docx`), buf);
     console.log('terminando');
 
     // insert table
     try {
       await knex(test_name).insert(insertTable);
       console.log('\n\n\n', { mensage: 'ok', file: req.files, body: req.body, insertTable })
-      // return res.status(200).json({ mensage: 'ok', file: req.files, body: req.body, insertTable })
+      return res.status(200).json({ mensage: 'ok', file: req.files, body: req.body, insertTable })
     } catch (error) {
       return res
         .status(400)
