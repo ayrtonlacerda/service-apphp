@@ -342,9 +342,24 @@ class FormController {
 
     //create docs
     let imagesDoc = {};
+    let newBody = {};
+
     files.map(item => {
       if (item.path) { // diferente de null
         imagesDoc[item.fieldname] = item.path;
+      }
+    })
+
+    Object.keys(body).map(key => {
+      let imp = false;
+      files.map(item => {
+        if (item.fieldname === key) {
+          imp = true;
+        }
+      })
+
+      if (!imp) {
+        newBody[key] = body[key];
       }
     })
 
@@ -389,7 +404,7 @@ class FormController {
     try {
       doc.loadZip(zip)
         .setData({
-          ...body,
+          ...newBody,
           ...imagesDoc,
           test_name,
           authorization: user.name,
