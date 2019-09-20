@@ -91,7 +91,7 @@ class FormController {
               ...schemaTable,
               {
                 name: component.data_name,
-                type: 'array'
+                type: 'string'
               },
               {
                 name: `leg_${component.data_name}`,
@@ -166,7 +166,7 @@ class FormController {
         }
         if (item.type === 'array') {
           await knex.schema.table(form.form_name, function (t) {
-            t.specificType(item.name, 'text[]')
+            t.specificType(item.name, 'string')
           })
         }
       })
@@ -320,7 +320,7 @@ class FormController {
       Object.keys(insertTable).map(key => {
         if (key === file.fieldname) {
           console.log('\nkeyyy and fildname', key, file.fieldname, '\n\n')
-          insertTable[key] = [...insertTable[key], file.filename]
+          insertTable[key] = file.filename;
           console.log('\narray', insertTable[key], '\n\n')
         }
       })
@@ -386,13 +386,13 @@ class FormController {
     opts.centered = false;
     opts.getImage = function (tagValue, tagName) {
       console.log('tag value', tagValue, tagName);
-      if (tagValue !== 'null') {
+      if (tagValue !== 'null' || tagValue !== null) {
         return fs.readFileSync(tagValue);
       }
       return null;
     };
     opts.getSize = function (img, tagValue, tagName) {
-      return [300, 300];
+      return [400, 400];
     };
 
     var imageModule = new ImageModule(opts);
