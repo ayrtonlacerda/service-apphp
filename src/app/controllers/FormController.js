@@ -353,6 +353,7 @@ class FormController {
     Object.keys(body).map(key => {
       let imp = false;
       files.map(item => {
+        console.log('loop', key, '----------', item.fieldname)
         if (item.fieldname === key) {
           imp = true;
         }
@@ -362,7 +363,7 @@ class FormController {
         newBody[key] = body[key];
       }
     })
-    console.log('\n\n ############   NewBody', newBody, imagesDoc);
+    console.log('\n\n ############   NewBody', newBody, '\n\n', imagesDoc);
 
     console.log('\n\n\n tentei -->   ', '\n\n', imagesDoc, '\n\n --------------------- body\n\n', body, '\n\n\n', `${test_name}-${discipline_id}.docx`)
 
