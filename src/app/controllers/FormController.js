@@ -406,9 +406,9 @@ class FormController {
         imagesDoc,
         files,
       }
-      console.log(JSON.stringify({ error: e }));
+      console.log(e);
       // The error thrown here contains additional information when logged with JSON.stringify (it contains a property object).
-      return res(e).status(500);
+      return json(e).status(500);
     }
 
     var buf = doc.getZip().generate({ type: 'nodebuffer', compression: "DEFLATE" });
