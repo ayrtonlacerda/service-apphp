@@ -53,9 +53,30 @@ class UserController {
 
   // lista todos os usuarios
   async index(req, res) {
-    const users = await User.findAll({})
+    let responseUser = [];
 
-    return res.status(200).json(users)
+    try {
+      const users = await User.findAll({})
+      console.log({ user: users[0].id })
+      users.map(user => {
+        responseUser = [
+          ...responseUser,
+          {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            type: user.type,
+            validity: user.validity,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt
+          }
+        ]
+      })
+      console.log({ responseUser })
+      return res.status(200).json(responseUser)
+    } catch (error) {
+      return res.status(500).json({ "ERROR LIST USER": error })
+    }
   }
 
   async login(req, res) {
