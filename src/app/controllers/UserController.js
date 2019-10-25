@@ -1,12 +1,15 @@
 const { User, Class, Student } = require('../models')
 const crypto = require('crypto')
+const bcrypt = require('bcryptjs')
 
 class UserController {
   // cria um novo usuario
   async store(req, res) {
-    const { email, type } = req.body
+    const { email, type, name } = req.body
+    const password = req.body.password_hash
     const { authorization } = req.headers
     let token
+    let password_hash
 
     if (type === 'prof') {
       if (authorization) {
@@ -36,15 +39,39 @@ class UserController {
       return res.status(400).json({ error: 'Usuario ja cadastrado' })
     }
 
-    token = crypto.randomBytes(32).toString('hex')
-
+    if (password) {
+      token = crypto.randomBytes(32).toString('hex')
+      password_hash = bcrypt.hashSync(password, 8)
+    } else {
+      return res.status(400).json({ error: 'É necessario senha' })
+    }
     console.log(token)
-    const user = await User.create({ ...req.body, token })
+    console.log(password_hash)
 
-    return res.status(200).json({
-      mensage: "Cadastrado com sucesso",
-      user
-    })
+    const createUser = {
+      name,
+      email,
+      type,
+      token,
+      password_hash,
+      validity: true
+    }
+    try {
+      const user = await User.create(createUser)
+
+      return res.status(200).json({
+        mensage: "Cadastrado com sucesso",
+        user: {
+          name,
+          email,
+          type,
+          validity: true
+        }
+      })
+    } catch (error) {
+      return res.status(500).json({ "ERROR_CREATE_USER": error, createUser })
+    }
+
   }
 
   async test(req, res) {
@@ -53,6 +80,7 @@ class UserController {
 
   // lista todos os usuarios
   async index(req, res) {
+    const { dev } = req.headers;
     let responseUser = [];
 
     try {
@@ -73,6 +101,9 @@ class UserController {
         ]
       })
       console.log({ responseUser })
+      if (dev) {
+        return res.status(200).json(users)
+      }
       return res.status(200).json(responseUser)
     } catch (error) {
       return res.status(500).json({ "ERROR LIST USER": error })
@@ -89,13 +120,34 @@ class UserController {
         .json({
           error: 'Usuario inexistente'
         })
-    } else if (user.password_hash !== password) {
+    }
+    const password_hash2 = await bcrypt.hash(password, 8)
+    console.log({})
+    console.log({ password_hash: user.password_hash })
+    console.log('--- \n')
+    console.log({ password_hash2: password_hash2 })
+
+    try {
+      const validity = await bcrypt.compare(password, user.password_hash)
+      const validity2 = bcrypt.compareSync(password, user.password_hash)
+
+      console.log({ validity2, validity })
+
+      if (!validity2) {
+        return res
+          .status(400)
+          .json({
+            error: 'Senha incorreta!'
+          })
+      }
+    } catch (error) {
       return res
-        .status(400)
+        .status(500)
         .json({
-          error: 'Senha incorreta!'
+          "ERROR_HASH": error
         })
     }
+
 
     return res
       .status(200)
