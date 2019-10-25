@@ -195,9 +195,6 @@ class FormController {
       }); */
 
       console.log('---------------------fiz a relaçao------------------------', table)
-
-
-      console.log('---------------------construiu tabela------------------------')
     }
 
     return res.status(200).json({ mensage: 'Sucesso', data: formResult, schemaTable })
@@ -287,14 +284,36 @@ class FormController {
         })
     }
 
-
-
     // verifica formulario
     if (!test) {
       return res
         .status(400)
         .json({ error: 'Teste não encontrado' })
     }
+
+    // verifica se o teste ja foi enviado
+    try {
+      test = await knex(test_name).where({ student_id: user.id })
+
+      if (test && test.length > 0)
+        return res
+          .status(409)
+          .json({
+            mensage: 'Teste já enviado',
+            student_id: user.id,
+            test_name,
+            data: test
+          })
+    } catch (err) {
+      return res
+        .status(500)
+        .json({
+          error: 'Erro internal',
+          student_id: user.id,
+          err
+        })
+    }
+
 
     insertTable = {
       ...insertTable,
@@ -308,6 +327,7 @@ class FormController {
             [file.fieldname]: file.filename
           }
         }) */
+
 
     files.map(file => {
       insertTable = {
